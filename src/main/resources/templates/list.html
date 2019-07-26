@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <table border="1">
+        <tr>
+            <td colspan="8" align="right">
+                <form action="/list" method="post">
+                    <input type="text" name="userName">
+                    <input type="submit" value="查询">
+                </form>
+            </td>
+        </tr>
+        <tr>
+            <th>id</th>
+            <th>姓名</th>
+            <th>性別</th>
+            <th>生日</th>
+            <th>角色</th>
+            <th>電話</th>
+            <th>地址</th>
+            <th>操作</th>
+        </tr>
+        <tr th:each="user:${users}">
+            <td th:text="${user['id']}"></td>
+            <td th:text="${user['userName']}"></td>
+            <td th:if="${user['gender']} eq 1">男</td>
+            <td th:if="${user['gender']} eq 2">女</td>
+            <td th:text="${user['birthday']}"></td>
+            <td th:text="${user['role']['roleName']}"></td>
+            <td th:text="${user['phone']}"></td>
+            <td th:text="${user['address']}"></td>
+            <td>
+                <a th:href="@{#}" class="delete" th:attr="did=${user['id']}">删除</a>
+                <a th:href="@{get(id=${user['id']})}">修改</a>
+            </td>
+        </tr>
+    </table>
+</body>
+<script src="/jquery-3.1.1.min.js"></script>
+<script th:inline="javascript">
+    $(function(){
+        $(".delete").click(function(){
+            var o = $(this);
+            var id = o.attr("did");
+
+            $.ajax({
+                url:"/del/"+id,
+                dataType:"json",
+                success:function(data){
+                    if(data > 0) {
+                        o.parent().parent().remove();
+                    }
+                }
+            })
+        })
+    })
+</script>
+</html>
